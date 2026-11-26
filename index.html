@@ -172,9 +172,12 @@ pre .k{color:#7fc4ff;font-weight:700}pre .c{color:#7d93b8}
 .camino text{fill:#fff;font:800 16px Nunito;text-anchor:middle}.camino .ms{fill:var(--b);stroke:var(--c);stroke-width:3}
 /* s14 ficha */
 .ficha{display:grid;gap:8px}
-.ficha .st{display:none;grid-template-columns:150px minmax(0,1fr);gap:10px;background:#fff;border-radius:14px;padding:10px 14px;animation:pop .5s var(--e) both}
-.ficha .st.v{display:grid}.ficha .st b{color:var(--b)}
-@media(max-width:600px){.ficha .st{grid-template-columns:minmax(0,1fr)}}
+.ficha .st{display:none;width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer;grid-template-columns:minmax(0,1fr);gap:4px;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 6px 16px -10px rgba(11,42,91,.5);border:2px solid transparent;animation:pop .5s var(--e) both;transition:border-color .2s}
+.ficha .st:hover{border-color:var(--s)}.ficha .st.v{display:grid}.ficha .st b{color:var(--b)}
+.ficha .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ficha .hd::after{content:"▸";margin-left:auto;color:var(--b);font-weight:800;transition:transform .3s}
+.ficha .st.open .hd::after{transform:rotate(90deg)}
+.ficha .val{display:none;padding-top:6px;border-top:1px dashed #c9dcf5;margin-top:4px;font-weight:700;animation:up .45s var(--e) both}
+.ficha .st.open .val{display:block}.ficha .tap{font-size:14px;font-weight:700;color:#5b7299}.ficha .st.open .tap{display:none}
 .fase{display:inline-block;font-weight:800;color:#fff;background:var(--b);border-radius:8px;padding:0 8px;font-size:14px;margin-right:6px}
 /* s15 casos */
 .casos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
@@ -562,11 +565,12 @@ function cmp(m){$('#cmpCode').innerHTML=CMP[m].code;$('#cmpList').innerHTML=CMP[
 $$('.sw button').forEach(b=>b.addEventListener('click',()=>cmp(b.dataset.m)));cmp('arr');
 
 /* 14 ficha bicicleta */
-const PASOS=[['1','Nombre de la clase','Bicicleta'],['1','Atributos','marca, color, número de cambios, cambio actual'],['1','Métodos','pedalear(), frenar(), cambiarMarcha()'],['1','Constructor','marca, color, número de cambios'],['1','Atributo privado','cambioActual: no puede superar el número de cambios'],['2','Herencia','BicicletaMontaña y BicicletaEléctrica extends Bicicleta'],['2','Polimorfismo','pedalear() en la eléctrica usa la batería'],['2','Composición','la eléctrica «tiene una» Bateria']];
-$('#ficha').innerHTML=PASOS.map(p=>`<div class="st"><span><span class="fase">Fase ${p[0]}</span><b>${p[1]}</b></span><span>${p[2]}</span></div>`).join('');
+const PASOS=[['1','Nombre de la clase','Bicicleta'],['1','Atributos','marca, color, número de cambios, cambio actual'],['1','Métodos','pedalear(), frenar(), cambiarMarcha()'],['1','Constructor','marca, color, número de cambios'],['1','Regla de negocio','cambioActual: no puede superar el número de cambios'],['2','Herencia','BicicletaMontaña y BicicletaEléctrica extends Bicicleta'],['2','Polimorfismo','pedalear() en la eléctrica usa la batería'],['2','Composición','la eléctrica «tiene una» Bateria']];
+$('#ficha').innerHTML=PASOS.map(p=>`<button class="st" aria-expanded="false"><span class="hd"><span class="fase">Fase ${p[0]}</span><b>${p[1]}</b></span><span class="tap">Toca para ver el ejemplo</span><span class="val">${p[2]}</span></button>`).join('');
+$('#ficha').addEventListener('click',e=>{const b=e.target.closest('.st');if(!b)return;const o=b.classList.toggle('open');b.setAttribute('aria-expanded',o)});
 let paso=0;const sts=()=>$$('#ficha .st');
 $('#bPaso').addEventListener('click',()=>{if(paso<PASOS.length){sts()[paso].classList.add('v');paso++}$('#bPaso').textContent=paso<PASOS.length?'Siguiente paso →':'¡Ficha completa!'});
-$('#bPasoR').addEventListener('click',()=>{paso=0;sts().forEach(s=>s.classList.remove('v'));$('#bPaso').textContent='Siguiente paso →'});
+$('#bPasoR').addEventListener('click',()=>{paso=0;sts().forEach(s=>{s.classList.remove('v','open');s.setAttribute('aria-expanded','false')});$('#bPaso').textContent='Siguiente paso →'});
 
 /* 15 casos */
 const CASOS={Biblioteca:'Una <b>biblioteca</b> de barrio quiere <i>registrar</i> sus <b>libros</b> y <b>revistas</b>, los <b>socios</b> y los <b>préstamos</b>. Un socio no puede tener más de tres préstamos activos, y si <i>devuelve</i> tarde se le <i>cobra</i> una <b>multa</b> por día.',
